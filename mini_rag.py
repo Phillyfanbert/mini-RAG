@@ -61,7 +61,7 @@ import requests  # talks to Gemini (hosted) and/or Ollama (local)
 DOCS_DIR       = os.environ.get("RAG_DOCS_DIR", "./docs")   # folder of documents
 DB_DIR         = os.environ.get("RAG_DB_DIR", "./rag_db")   # where Chroma persists
 COLLECTION     = "mini_rag"          # logical name of the vector collection
-EMBED_MODEL    = "all-MiniLM-L6-v2"  # local embedding model (small, CPU-fine)
+EMBED_MODEL    = "paraphrase-multilingual-MiniLM-L12-v2"  # local multilingual embedding model (small, CPU-fine)
 FILE_EXTS      = {".md", ".txt", ".pdf", ".docx"}  # which files to index
 CHUNK_SIZE     = 1000                # target chunk length in characters
 CHUNK_OVERLAP  = 150                 # characters of overlap between chunks
@@ -285,9 +285,14 @@ def build_prompt(question: str, hits):
     for i, (doc, md) in enumerate(hits, 1):
         context_blocks.append(f"[{i}] (source: {md.get('source')})\n{doc}")
     context = "\n\n".join(context_blocks)
+    
     return (
-        "Answer the question using ONLY the context below. "
-        "If the answer isn't in the context, say you don't know.\n\n"
+        "You are a helpful, bilingual language learning assistant. "
+        "Answer the question based on the provided context. "
+        "If the answer cannot be found or inferred from the context, say you don't know.\n\n"
+        "FORMATTING RULE: When providing Korean words, expressions, or greetings, "
+        "you MUST always include the actual Korean script (Hangul) along with its "
+        "English translation/Romanization so the user can learn it properly.\n\n"
         f"CONTEXT:\n{context}\n\n"
         f"QUESTION: {question}\n\nANSWER:"
     )
