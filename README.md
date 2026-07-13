@@ -150,5 +150,3 @@ This project is licensed under the MIT License, see the LICENSE file for details
 ## Acknowledgements
 
 Built for local document retrieval and lightweight RAG experimentation.
-
-```
